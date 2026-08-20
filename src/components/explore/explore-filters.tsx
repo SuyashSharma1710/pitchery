@@ -29,9 +29,9 @@ export default function ExploreFilters({
               key={cat}
               type="button"
               onClick={() => onSelectCategory(cat)}
-              className={`px-4 py-2 rounded-full border-[2px] border-black text-xs font-black uppercase tracking-wider transition-all ${
+              className={`px-4 py-2 rounded-full border-2 border-black text-xs font-black uppercase tracking-wider transition-all ${
                 isSelected
-                  ? "bg-[#FBE843] text-black shadow-[3px_3px_0px_0px_#000000] translate-x-[-1px] translate-y-[-1px]"
+                  ? "bg-[#FBE843] text-black shadow-[3px_3px_0px_0px_#000000] -translate-x-px -translate-y-px"
                   : "bg-[#F8F8F8] text-zinc-700 hover:bg-zinc-200"
               }`}
             >

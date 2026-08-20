@@ -47,7 +47,7 @@ export default function StartupActions({
       <div className="flex items-center gap-2">
         <Link
           href={`/startup/${startupId}/edit`}
-          className="bg-white hover:bg-zinc-100 text-black border-[2px] border-black rounded-full py-2 px-4 font-black uppercase text-xs tracking-wider shadow-[3px_3px_0px_0px_#000000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center gap-1.5"
+          className="bg-white hover:bg-zinc-100 text-black border-2 border-black rounded-full py-2 px-4 font-black uppercase text-xs tracking-wider shadow-[3px_3px_0px_0px_#000000] hover:-translate-x-px hover:-translate-y-px transition-all flex items-center gap-1.5"
         >
           <Edit className="w-3.5 h-3.5 text-[#EE2B69]" />
           EDIT PITCH
@@ -55,7 +55,7 @@ export default function StartupActions({
 
         <button
           onClick={() => setShowConfirm(true)}
-          className="bg-red-50 hover:bg-red-100 text-red-600 border-[2px] border-black rounded-full py-2 px-3.5 font-black uppercase text-xs tracking-wider shadow-[3px_3px_0px_0px_#000000] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all flex items-center gap-1 cursor-pointer"
+          className="bg-red-50 hover:bg-red-100 text-red-600 border-2 border-black rounded-full py-2 px-3.5 font-black uppercase text-xs tracking-wider shadow-[3px_3px_0px_0px_#000000] hover:-translate-x-px hover:-translate-y-px transition-all flex items-center gap-1 cursor-pointer"
           title="Delete this startup pitch"
         >
           <Trash2 className="w-3.5 h-3.5" />

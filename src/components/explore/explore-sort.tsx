@@ -11,7 +11,7 @@ interface ExploreSortProps {
 export default function ExploreSort({ sortBy, onSortChange }: ExploreSortProps) {
   return (
     <div className="flex items-center gap-2 shrink-0">
-      <span className="text-xs font-black uppercase tracking-wider text-zinc-500 hidden sm:inline flex items-center gap-1">
+      <span className="text-xs font-black uppercase tracking-wider text-zinc-500 hidden sm:inline-flex items-center gap-1">
         <SlidersHorizontal className="w-3.5 h-3.5 text-[#EE2B69]" /> Sort:
       </span>
       <div className="flex items-center bg-[#F8F8F8] border-[2.5px] border-black rounded-full p-1 shadow-[2px_2px_0px_0px_#000000]">

@@ -72,7 +72,7 @@ export default function ExploreView({ initialStartups }: ExploreViewProps) {
     <div className="w-full">
       {/* Filter & Control Bar Box */}
       <div className="bg-white border-[3px] border-black rounded-[28px] p-6 sm:p-8 shadow-[6px_6px_0px_0px_#000000] mb-10">
-        <div className="flex flex-col lg:flex-row gap-5 items-stretch lg:items-center justify-between pb-6 border-b-[2px] border-black/10">
+        <div className="flex flex-col lg:flex-row gap-5 items-stretch lg:items-center justify-between pb-6 border-b-2 border-black/10">
           {/* Search Bar Input */}
           <div className="relative flex-1">
             <div className="absolute left-4 top-3.5 text-zinc-400">
@@ -109,7 +109,7 @@ export default function ExploreView({ initialStartups }: ExploreViewProps) {
       </div>
 
       {/* Pitches Counter & Active Filter Reset Bar */}
-      <div className="flex items-center justify-between mb-8 pb-3 border-b-[2px] border-black">
+      <div className="flex items-center justify-between mb-8 pb-3 border-b-2 border-black">
         <div className="flex items-center gap-3">
           <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-black">
             {selectedCategory === "All" ? "All Startup Pitches" : `${selectedCategory} Pitches`}

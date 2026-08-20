@@ -29,7 +29,7 @@ export default function StartupCard({ startup }: StartupCardProps) {
   const authorId = author?.id || "anonymous";
 
   return (
-    <div className="group relative bg-white border-[3px] border-black rounded-[24px] p-5 shadow-[4px_4px_0px_0px_#000000] hover:border-[#EE2B69] hover:shadow-[5px_5px_0px_0px_#EE2B69] transition-all duration-200 flex flex-col justify-between">
+    <div className="group relative bg-white border-[3px] border-black rounded-3xl p-5 shadow-[4px_4px_0px_0px_#000000] hover:border-[#EE2B69] hover:shadow-[5px_5px_0px_0px_#EE2B69] transition-all duration-200 flex flex-col justify-between">
       <div>
         {/* Top Header: Date & Views */}
         <div className="flex items-center justify-between mb-3">
@@ -53,7 +53,7 @@ export default function StartupCard({ startup }: StartupCardProps) {
           </Link>
 
           <Link href={`/user/${authorId}`}>
-            <div className="w-8 h-8 rounded-full border-[1.5px] border-black overflow-hidden bg-[#FBE843] flex-shrink-0">
+            <div className="w-8 h-8 rounded-full border-[1.5px] border-black overflow-hidden bg-[#FBE843] shrink-0">
               <Image
                 src={authorImage}
                 alt={authorName}
@@ -78,8 +78,8 @@ export default function StartupCard({ startup }: StartupCardProps) {
         </p>
 
         {/* Thumbnail Preview */}
-        <Link href={`/startup/${id}`} className="block mb-4 overflow-hidden rounded-[16px] border border-black/15 bg-black">
-          <div className="relative aspect-[16/9] w-full group-hover:scale-[1.02] transition-transform duration-300">
+        <Link href={`/startup/${id}`} className="block mb-4 overflow-hidden rounded-2xl border border-black/15 bg-black">
+          <div className="relative aspect-video w-full group-hover:scale-[1.02] transition-transform duration-300">
             <Image
               src={image}
               alt={title}

@@ -21,7 +21,7 @@ export default function StartupDeleteDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div className="w-full max-w-md bg-white border-[4px] border-black rounded-[24px] p-6 shadow-[8px_8px_0px_0px_#000000]">
+      <div className="w-full max-w-md bg-white border-4 border-black rounded-3xl p-6 shadow-[8px_8px_0px_0px_#000000]">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="w-5 h-5" />
@@ -46,7 +46,7 @@ export default function StartupDeleteDialog({
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-full border-[2px] border-black text-xs font-black uppercase text-zinc-700 hover:bg-zinc-100 cursor-pointer"
+            className="px-4 py-2 rounded-full border-2 border-black text-xs font-black uppercase text-zinc-700 hover:bg-zinc-100 cursor-pointer"
           >
             Cancel
           </button>
@@ -54,7 +54,7 @@ export default function StartupDeleteDialog({
             type="button"
             onClick={onConfirm}
             disabled={isDeleting}
-            className="bg-red-600 hover:bg-red-700 text-white border-[2px] border-black rounded-full py-2 px-5 text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_#000000] transition-all disabled:opacity-50 cursor-pointer"
+            className="bg-red-600 hover:bg-red-700 text-white border-2 border-black rounded-full py-2 px-5 text-xs font-black uppercase tracking-wider shadow-[3px_3px_0px_0px_#000000] transition-all disabled:opacity-50 cursor-pointer"
           >
             {isDeleting ? "DELETING..." : "CONFIRM DELETE"}
           </button>

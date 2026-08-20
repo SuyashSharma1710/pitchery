@@ -63,7 +63,7 @@ export default function UserNavDropdown({ user, unreadCount = 0 }: UserNavDropdo
         <div className="absolute right-0 top-full pt-2 z-50 animate-in fade-in zoom-in-95 duration-150 w-64">
           <div className="bg-white border-[3px] border-black rounded-[22px] p-2 shadow-[6px_6px_0px_0px_#000000] overflow-hidden">
             {/* Header info */}
-            <div className="px-3.5 py-3 border-b-[2px] border-black/10 bg-yellow-50/50 rounded-t-[16px] mb-1.5">
+            <div className="px-3.5 py-3 border-b-2 border-black/10 bg-yellow-50/50 rounded-t-2xl mb-1.5">
               <div className="font-black text-sm text-black truncate">{user.name}</div>
               <div className="text-xs font-bold text-[#EE2B69] truncate">@{user.username}</div>
               <div className="text-[11px] font-semibold text-zinc-500 truncate">{user.email}</div>
@@ -143,7 +143,7 @@ export default function UserNavDropdown({ user, unreadCount = 0 }: UserNavDropdo
             </div>
 
             {/* Divider */}
-            <div className="my-1.5 border-t-[2px] border-black/10" />
+            <div className="my-1.5 border-t-2 border-black/10" />
 
             {/* Logout Action */}
             <form action={logoutAction}>
