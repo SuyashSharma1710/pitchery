@@ -71,7 +71,7 @@ export default async function StartupDetailsPage({ params }: StartupPageProps) {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-10">
         {/* Media Showcase Container */}
-        <div className="relative w-full aspect-[16/9] md:aspect-[21/10] bg-[#141413] border-[3px] border-black rounded-[24px] overflow-hidden shadow-[6px_6px_0px_0px_#000000] mb-8">
+        <div className="relative w-full aspect-video md:aspect-21/10 bg-[#141413] border-[3px] border-black rounded-3xl overflow-hidden shadow-[6px_6px_0px_0px_#000000] mb-8">
           <Image
             src={image}
             alt={title}
@@ -86,7 +86,7 @@ export default async function StartupDetailsPage({ params }: StartupPageProps) {
         <div className="flex flex-wrap items-center justify-between gap-4 py-4 mb-8 border-b-2 border-black/10">
           {/* Left: Author Profile */}
           <Link href={`/user/${authorId}`} className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-full border-2 border-black overflow-hidden bg-[#FBE843] flex-shrink-0 shadow-[2px_2px_0px_0px_#000000] group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-full border-2 border-black overflow-hidden bg-[#FBE843] shrink-0 shadow-[2px_2px_0px_0px_#000000] group-hover:scale-105 transition-transform">
               <Image
                 src={authorImage}
                 alt={authorName}
@@ -107,7 +107,7 @@ export default async function StartupDetailsPage({ params }: StartupPageProps) {
 
           {/* Right: Category Pill + Reach Out + Author Actions */}
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="bg-[#FFE4E6] text-black border-[2px] border-black px-4 py-1.5 rounded-full text-xs font-black tracking-wide">
+            <span className="bg-[#FFE4E6] text-black border-2 border-black px-4 py-1.5 rounded-full text-xs font-black tracking-wide">
               {category}
             </span>
 
@@ -131,7 +131,7 @@ export default async function StartupDetailsPage({ params }: StartupPageProps) {
         </div>
 
         {/* Pitch Breakdown Content */}
-        <div className="bg-white border-[3px] border-black rounded-[24px] p-6 md:p-10 shadow-[6px_6px_0px_0px_#000000] mb-12">
+        <div className="bg-white border-[3px] border-black rounded-3xl p-6 md:p-10 shadow-[6px_6px_0px_0px_#000000] mb-12">
           <MarkdownRenderer content={pitch} />
         </div>
 
