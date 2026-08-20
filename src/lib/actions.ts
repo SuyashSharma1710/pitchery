@@ -9,7 +9,7 @@ import {
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { startupFormSchema } from "./validation";
 import { ActionResponse } from "@/core/interfaces/common.interface";
-import { User, Startup, Comment, Reachout, ReachoutReply } from "@/types";
+import { User, Startup, Comment, Reachout, ReachoutReply, ReachoutStatus } from "@/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -300,7 +300,7 @@ export async function createReachoutAction(
 
 export async function toggleTalkMoreAction(
   reachoutId: string,
-  status: "ACCEPTED" | "DECLINED"
+  status: ReachoutStatus
 ): Promise<ActionResponse<Reachout>> {
   const user = await authService.getCurrentUser();
   if (!user) {

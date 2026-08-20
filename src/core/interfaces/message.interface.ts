@@ -39,6 +39,7 @@ export interface IMessageRepository {
   findExistingReachout(senderId: string, startupId: string): Promise<Reachout | null>;
   countUnread(receiverId: string): Promise<number>;
   create(entity: ReachoutCreateEntity): Promise<Reachout>;
+  isSenderBlocked(senderId: string, receiverId: string): Promise<boolean>;
   updateStatus(id: string, status: ReachoutStatus, receiverId: string): Promise<Reachout | null>;
   addReply(reply: { id: string; reachoutId: string; senderId: string; message: string }): Promise<ReachoutReply>;
   markAsRead(messageId: string, userId: string): Promise<boolean>;
@@ -53,6 +54,7 @@ export interface IMessageService {
   getReachoutById(id: string, userId: string): Promise<Reachout | null>;
   checkExistingReachout(senderId: string, startupId: string): Promise<Reachout | null>;
   getUnreadCount(userId: string): Promise<number>;
+  isSenderBlocked(senderId: string, receiverId: string): Promise<boolean>;
   createReachout(dto: CreateReachoutDTO): Promise<Reachout>;
   toggleTalkMore(reachoutId: string, status: ReachoutStatus, receiverId: string): Promise<Reachout>;
   sendReply(dto: CreateReplyDTO): Promise<ReachoutReply>;

@@ -33,7 +33,7 @@ export interface Comment {
   user?: User;
 }
 
-export type ReachoutStatus = "PENDING" | "ACCEPTED" | "DECLINED";
+export type ReachoutStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "BLOCKED";
 
 export interface ReachoutReply {
   id: string;

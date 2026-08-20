@@ -108,6 +108,12 @@ export class InMemoryMessageRepository implements IMessageRepository {
     ).length;
   }
 
+  async isSenderBlocked(senderId: string, receiverId: string): Promise<boolean> {
+    return this.reachouts.some(
+      (m) => m.senderId === senderId && m.receiverId === receiverId && m.status === "BLOCKED"
+    );
+  }
+
   async create(entity: ReachoutCreateEntity): Promise<Reachout> {
     const sender = entity.senderId
       ? this.users.find((u) => u.id === entity.senderId)

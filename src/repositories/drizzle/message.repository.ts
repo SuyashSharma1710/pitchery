@@ -181,6 +181,27 @@ export class DrizzleMessageRepository implements IMessageRepository {
     }
   }
 
+  async isSenderBlocked(senderId: string, receiverId: string): Promise<boolean> {
+    try {
+      const rows = await this.database
+        .select({ id: schema.reachouts.id })
+        .from(schema.reachouts)
+        .where(
+          and(
+            eq(schema.reachouts.senderId, senderId),
+            eq(schema.reachouts.receiverId, receiverId),
+            eq(schema.reachouts.status, "BLOCKED")
+          )
+        )
+        .limit(1);
+
+      return rows.length > 0;
+    } catch (err) {
+      console.warn("⚠️ Neon DB isSenderBlocked error (falling back to in-memory):", err);
+      return this.inMemory.isSenderBlocked(senderId, receiverId);
+    }
+  }
+
   async create(entity: ReachoutCreateEntity): Promise<Reachout> {
     try {
       const [inserted] = await this.database

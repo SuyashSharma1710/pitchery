@@ -176,6 +176,10 @@ export default function ReachoutModal({
                       <span className="bg-zinc-200 text-zinc-700 border border-zinc-400 text-xs font-black px-2.5 py-0.5 rounded-full uppercase">
                         ⛔ Declined
                       </span>
+                    ) : existingReachout.status === "BLOCKED" ? (
+                      <span className="bg-red-100 text-red-800 border border-red-500 text-xs font-black px-2.5 py-0.5 rounded-full uppercase">
+                        🚫 Blocked
+                      </span>
                     ) : (
                       <span className="bg-yellow-100 text-yellow-900 border border-yellow-500 text-xs font-black px-2.5 py-0.5 rounded-full uppercase flex items-center gap-1">
                         <Clock className="w-3 h-3" /> Awaiting Founder Approval
@@ -188,6 +192,8 @@ export default function ReachoutModal({
                       ? "Great news! The founder accepted 'Talk More'. You can converse directly in your Private Inbox thread."
                       : existingReachout.status === "DECLINED"
                       ? "The founder has declined further reachouts for this pitch."
+                      : existingReachout.status === "BLOCKED"
+                      ? "This communication channel is currently restricted."
                       : "Senders are limited to 1 initial reachout per pitch. Once the founder accepts 'Talk More', you will be able to converse freely in your Inbox."}
                   </p>
                 </div>

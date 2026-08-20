@@ -35,6 +35,10 @@ export class MessageService implements IMessageService {
     return await this.messageRepository.countUnread(userId);
   }
 
+  async isSenderBlocked(senderId: string, receiverId: string): Promise<boolean> {
+    return await this.messageRepository.isSenderBlocked(senderId, receiverId);
+  }
+
   async createReachout(dto: CreateReachoutDTO): Promise<Reachout> {
     if (!dto.senderId) {
       throw new Error("You must be logged in to send a reachout message.");
@@ -42,6 +46,12 @@ export class MessageService implements IMessageService {
 
     if (dto.senderId === dto.receiverId) {
       throw new Error("You cannot send a reachout to yourself.");
+    }
+
+    // Check if receiver has blocked this sender
+    const isBlocked = await this.messageRepository.isSenderBlocked(dto.senderId, dto.receiverId);
+    if (isBlocked) {
+      throw new Error("You are not permitted to send reachout messages to this founder.");
     }
 
     // Rate Limit: 1 reachout per pitch
@@ -100,6 +110,10 @@ export class MessageService implements IMessageService {
 
     if (!isSender && !isReceiver) {
       throw new Error("You do not have permission to reply to this conversation.");
+    }
+
+    if (reachout.status === "BLOCKED") {
+      throw new Error("This conversation is currently blocked.");
     }
 
     // Permission enforcement: Sender can only reply if founder accepted Talk More
