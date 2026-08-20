@@ -11,19 +11,25 @@ interface UserPageProps {
 }
 
 export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const user = await authService.getUserById(id);
+  try {
+    const { id } = await params;
+    const user = await authService.getUserById(id);
 
-  if (!user) {
+    if (!user) {
+      return {
+        title: "User Not Found | Pitchery",
+      };
+    }
+
     return {
-      title: "User Not Found | Pitchery",
+      title: `${user.name} (@${user.username}) | Pitchery`,
+      description: user.bio || `Explore startup pitches created by ${user.name} on Pitchery.`,
+    };
+  } catch {
+    return {
+      title: "Founder Profile | Pitchery",
     };
   }
-
-  return {
-    title: `${user.name} (@${user.username}) | Pitchery`,
-    description: user.bio || `Explore startup pitches created by ${user.name} on Pitchery.`,
-  };
 }
 
 export default async function UserProfilePage({ params, searchParams }: UserPageProps) {

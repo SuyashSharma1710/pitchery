@@ -18,19 +18,25 @@ interface StartupPageProps {
 }
 
 export async function generateMetadata({ params }: StartupPageProps): Promise<Metadata> {
-  const { id } = await params;
-  const startup = await startupService.getStartupById(id);
+  try {
+    const { id } = await params;
+    const startup = await startupService.getStartupById(id);
 
-  if (!startup) {
+    if (!startup) {
+      return {
+        title: "Startup Not Found | Pitchery",
+      };
+    }
+
     return {
-      title: "Startup Not Found | Pitchery",
+      title: `${startup.title} | Pitchery`,
+      description: startup.description,
+    };
+  } catch {
+    return {
+      title: "Startup Pitch | Pitchery",
     };
   }
-
-  return {
-    title: `${startup.title} | Pitchery`,
-    description: startup.description,
-  };
 }
 
 export default async function StartupDetailsPage({ params }: StartupPageProps) {

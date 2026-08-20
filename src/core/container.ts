@@ -41,22 +41,27 @@ class ServiceContainer {
   constructor() {
     const isDbConnected = Boolean(db);
 
+    const inMemoryUserRepo = new InMemoryUserRepository();
+    const inMemoryStartupRepo = new InMemoryStartupRepository();
+    const inMemoryCommentRepo = new InMemoryCommentRepository();
+    const inMemoryMessageRepo = new InMemoryMessageRepository();
+
     // 1. Instantiate concrete repositories based on database connectivity (LSP)
     this.userRepository = isDbConnected
-      ? new DrizzleUserRepository()
-      : new InMemoryUserRepository();
+      ? new DrizzleUserRepository(inMemoryUserRepo)
+      : inMemoryUserRepo;
 
     this.startupRepository = isDbConnected
-      ? new DrizzleStartupRepository()
-      : new InMemoryStartupRepository();
+      ? new DrizzleStartupRepository(inMemoryStartupRepo)
+      : inMemoryStartupRepo;
 
     this.commentRepository = isDbConnected
-      ? new DrizzleCommentRepository()
-      : new InMemoryCommentRepository();
+      ? new DrizzleCommentRepository(inMemoryCommentRepo)
+      : inMemoryCommentRepo;
 
     this.messageRepository = isDbConnected
-      ? new DrizzleMessageRepository()
-      : new InMemoryMessageRepository();
+      ? new DrizzleMessageRepository(inMemoryMessageRepo)
+      : inMemoryMessageRepo;
 
     // 2. Inject repositories into pure business domain services (DIP)
     this.authService = new AuthService(
