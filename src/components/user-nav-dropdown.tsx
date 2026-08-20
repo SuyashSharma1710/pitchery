@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { User } from "@/types";
-import { logoutAction } from "@/lib/actions";
+import { logoutAction, getLiveUnreadCountAction } from "@/lib/actions";
 
 interface UserNavDropdownProps {
   user: User;
@@ -13,7 +13,21 @@ interface UserNavDropdownProps {
 
 export default function UserNavDropdown({ user, unreadCount = 0 }: UserNavDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [liveCount, setLiveCount] = useState(unreadCount);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Live polling for unread messages (every 8s)
+  useEffect(() => {
+    async function fetchUnread() {
+      const res = await getLiveUnreadCountAction();
+      if (res.status === "SUCCESS" && typeof res.data === "number") {
+        setLiveCount(res.data);
+      }
+    }
+
+    const interval = setInterval(fetchUnread, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Close when clicking outside
   useEffect(() => {
@@ -51,9 +65,9 @@ export default function UserNavDropdown({ user, unreadCount = 0 }: UserNavDropdo
         </div>
 
         {/* Unread Inbox Indicator Dot on Avatar */}
-        {unreadCount > 0 && (
+        {liveCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-[#EE2B69] text-white text-[9px] font-black w-4 h-4 rounded-full border border-black flex items-center justify-center animate-pulse">
-            {unreadCount}
+            {liveCount}
           </span>
         )}
       </button>
@@ -113,9 +127,9 @@ export default function UserNavDropdown({ user, unreadCount = 0 }: UserNavDropdo
                   </svg>
                   <span>Private Inbox</span>
                 </div>
-                {unreadCount > 0 && (
+                {liveCount > 0 && (
                   <span className="bg-[#EE2B69] text-white text-[10px] font-black px-2 py-0.5 rounded-full border border-black">
-                    {unreadCount}
+                    {liveCount}
                   </span>
                 )}
               </Link>

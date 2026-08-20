@@ -33,6 +33,17 @@ export interface Comment {
   user?: User;
 }
 
+export type ReachoutStatus = "PENDING" | "ACCEPTED" | "DECLINED";
+
+export interface ReachoutReply {
+  id: string;
+  reachoutId: string;
+  senderId: string;
+  message: string;
+  createdAt: string | Date;
+  sender?: User;
+}
+
 export interface Reachout {
   id: string;
   senderId?: string | null;
@@ -42,10 +53,14 @@ export interface Reachout {
   senderEmail: string;
   subject: string;
   message: string;
+  status: ReachoutStatus;
   isRead: boolean;
   createdAt: string | Date;
+  updatedAt?: string | Date;
   startup?: Startup;
   sender?: User;
+  receiver?: User;
+  replies?: ReachoutReply[];
 }
 
 export interface Vote {

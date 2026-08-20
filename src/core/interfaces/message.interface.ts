@@ -1,7 +1,7 @@
-import { Reachout } from "@/types";
+import { Reachout, ReachoutReply, ReachoutStatus } from "@/types";
 
 export interface CreateReachoutDTO {
-  senderId?: string | null;
+  senderId: string;
   receiverId: string;
   startupId?: string | null;
   senderName: string;
@@ -19,7 +19,14 @@ export interface ReachoutCreateEntity {
   senderEmail: string;
   subject: string;
   message: string;
+  status: ReachoutStatus;
   isRead: boolean;
+}
+
+export interface CreateReplyDTO {
+  reachoutId: string;
+  senderId: string;
+  message: string;
 }
 
 /**
@@ -27,9 +34,14 @@ export interface ReachoutCreateEntity {
  */
 export interface IMessageRepository {
   findByReceiverId(receiverId: string): Promise<Reachout[]>;
+  findBySenderId(senderId: string): Promise<Reachout[]>;
+  findById(id: string): Promise<Reachout | null>;
+  findExistingReachout(senderId: string, startupId: string): Promise<Reachout | null>;
   countUnread(receiverId: string): Promise<number>;
   create(entity: ReachoutCreateEntity): Promise<Reachout>;
-  markAsRead(messageId: string, receiverId: string): Promise<boolean>;
+  updateStatus(id: string, status: ReachoutStatus, receiverId: string): Promise<Reachout | null>;
+  addReply(reply: { id: string; reachoutId: string; senderId: string; message: string }): Promise<ReachoutReply>;
+  markAsRead(messageId: string, userId: string): Promise<boolean>;
 }
 
 /**
@@ -37,7 +49,13 @@ export interface IMessageRepository {
  */
 export interface IMessageService {
   getInboxMessages(userId: string): Promise<Reachout[]>;
+  getSentReachouts(userId: string): Promise<Reachout[]>;
+  getReachoutById(id: string, userId: string): Promise<Reachout | null>;
+  checkExistingReachout(senderId: string, startupId: string): Promise<Reachout | null>;
   getUnreadCount(userId: string): Promise<number>;
   createReachout(dto: CreateReachoutDTO): Promise<Reachout>;
+  toggleTalkMore(reachoutId: string, status: ReachoutStatus, receiverId: string): Promise<Reachout>;
+  sendReply(dto: CreateReplyDTO): Promise<ReachoutReply>;
   markAsRead(messageId: string, userId: string): Promise<boolean>;
 }
+

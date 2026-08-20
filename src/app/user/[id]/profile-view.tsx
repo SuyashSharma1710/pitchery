@@ -14,6 +14,7 @@ interface ProfileViewProps {
   currentUser: User | null;
   startups: Startup[];
   inboxMessages: Reachout[];
+  sentMessages?: Reachout[];
   initialTab?: "pitches" | "inbox";
 }
 
@@ -22,6 +23,7 @@ export default function ProfileView({
   currentUser,
   startups,
   inboxMessages,
+  sentMessages = [],
   initialTab = "pitches",
 }: ProfileViewProps) {
   const router = useRouter();
@@ -138,9 +140,13 @@ export default function ProfileView({
         </div>
       )}
 
-      {/* Tab 2: Private Founder Inbox */}
+      {/* Tab 2: Private Founder Inbox & Conversations */}
       {activeTab === "inbox" && isOwner && (
-        <InboxTab initialMessages={inboxMessages} />
+        <InboxTab
+          initialMessages={inboxMessages}
+          initialSentMessages={sentMessages}
+          currentUserId={user.id}
+        />
       )}
     </div>
   );

@@ -9,7 +9,7 @@ import {
 import { setSessionCookie, clearSessionCookie } from "@/lib/session";
 import { startupFormSchema } from "./validation";
 import { ActionResponse } from "@/core/interfaces/common.interface";
-import { User, Startup, Comment, Reachout } from "@/types";
+import { User, Startup, Comment, Reachout, ReachoutReply } from "@/types";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -260,7 +260,7 @@ export async function deleteCommentAction(
 }
 
 // ----------------------------------------------------
-// 4. Private Reach Out & Inbox Actions
+// 4. Private Reach Out & Conversation Actions (Reachout Revert)
 // ----------------------------------------------------
 export async function createReachoutAction(
   receiverId: string,
@@ -268,6 +268,9 @@ export async function createReachoutAction(
   payload: { senderName: string; senderEmail: string; subject: string; message: string }
 ): Promise<ActionResponse<Reachout>> {
   const user = await authService.getCurrentUser();
+  if (!user) {
+    return { status: "ERROR", error: "You must be signed in to send reachouts to founders." };
+  }
 
   if (!payload.senderName || !payload.senderEmail || !payload.subject || !payload.message) {
     return { status: "ERROR", error: "Please complete all fields to send your message." };
@@ -275,7 +278,7 @@ export async function createReachoutAction(
 
   try {
     const reachout = await messageService.createReachout({
-      senderId: user?.id || null,
+      senderId: user.id,
       receiverId,
       startupId,
       senderName: payload.senderName,
@@ -285,10 +288,118 @@ export async function createReachoutAction(
     });
 
     revalidatePath(`/user/${receiverId}`);
+    revalidatePath(`/user/${user.id}`);
+    if (startupId) revalidatePath(`/startup/${startupId}`);
+
     return { status: "SUCCESS", data: reachout };
   } catch (err: unknown) {
     const error = err instanceof Error ? err.message : "Failed to send reachout message.";
     return { status: "ERROR", error };
+  }
+}
+
+export async function toggleTalkMoreAction(
+  reachoutId: string,
+  status: "ACCEPTED" | "DECLINED"
+): Promise<ActionResponse<Reachout>> {
+  const user = await authService.getCurrentUser();
+  if (!user) {
+    return { status: "ERROR", error: "Unauthorized." };
+  }
+
+  try {
+    const updated = await messageService.toggleTalkMore(reachoutId, status, user.id);
+    revalidatePath(`/user/${user.id}`);
+    if (updated.senderId) revalidatePath(`/user/${updated.senderId}`);
+    return { status: "SUCCESS", data: updated };
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err.message : "Failed to update status.";
+    return { status: "ERROR", error };
+  }
+}
+
+export async function sendReachoutReplyAction(
+  reachoutId: string,
+  message: string
+): Promise<ActionResponse<ReachoutReply>> {
+  const user = await authService.getCurrentUser();
+  if (!user) {
+    return { status: "ERROR", error: "You must be signed in to reply." };
+  }
+
+  if (!message.trim()) {
+    return { status: "ERROR", error: "Message cannot be empty." };
+  }
+
+  try {
+    const reply = await messageService.sendReply({
+      reachoutId,
+      senderId: user.id,
+      message,
+    });
+
+    revalidatePath(`/user/${user.id}`);
+    return { status: "SUCCESS", data: reply };
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err.message : "Failed to send reply.";
+    return { status: "ERROR", error };
+  }
+}
+
+export async function getReachoutThreadAction(
+  reachoutId: string
+): Promise<ActionResponse<Reachout>> {
+  const user = await authService.getCurrentUser();
+  if (!user) {
+    return { status: "ERROR", error: "Unauthorized." };
+  }
+
+  try {
+    const reachout = await messageService.getReachoutById(reachoutId, user.id);
+    if (!reachout) {
+      return { status: "ERROR", error: "Thread not found." };
+    }
+    return { status: "SUCCESS", data: reachout };
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err.message : "Failed to fetch thread.";
+    return { status: "ERROR", error };
+  }
+}
+
+export async function checkPitchReachoutStatusAction(
+  startupId: string
+): Promise<ActionResponse<{ hasSent: boolean; reachout: Reachout | null }>> {
+  const user = await authService.getCurrentUser();
+  if (!user) {
+    return { status: "SUCCESS", data: { hasSent: false, reachout: null } };
+  }
+
+  try {
+    const existing = await messageService.checkExistingReachout(user.id, startupId);
+    return {
+      status: "SUCCESS",
+      data: {
+        hasSent: Boolean(existing),
+        reachout: existing,
+      },
+    };
+  } catch (err: unknown) {
+    const error = err instanceof Error ? err.message : "Failed to check status.";
+    return { status: "ERROR", error };
+  }
+}
+
+export async function getLiveUnreadCountAction(): Promise<ActionResponse<number>> {
+  const user = await authService.getCurrentUser();
+  if (!user) {
+    return { status: "SUCCESS", data: 0 };
+  }
+
+  try {
+    const count = await messageService.getUnreadCount(user.id);
+    return { status: "SUCCESS", data: count };
+  } catch {
+    return { status: "SUCCESS", data: 0 };
   }
 }
 

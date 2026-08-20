@@ -46,6 +46,8 @@ export default async function UserProfilePage({ params, searchParams }: UserPage
   const userStartups = await startupService.getStartups({ authorId: user.id });
   const inboxMessages =
     currentUser?.id === user.id ? await messageService.getInboxMessages(user.id) : [];
+  const sentMessages =
+    currentUser?.id === user.id ? await messageService.getSentReachouts(user.id) : [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
@@ -62,6 +64,7 @@ export default async function UserProfilePage({ params, searchParams }: UserPage
             currentUser={currentUser}
             startups={userStartups}
             inboxMessages={inboxMessages}
+            sentMessages={sentMessages}
             initialTab={initialTab}
           />
         </div>

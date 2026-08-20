@@ -58,7 +58,7 @@ export const comments = pgTable(
   })
 );
 
-// 4. Reachouts Table (Private Founder Inbox Messages)
+// 4. Reachouts Table (Private Founder Inbox Messages & Conversations)
 export const reachouts = pgTable(
   "reachouts",
   {
@@ -72,17 +72,41 @@ export const reachouts = pgTable(
     senderEmail: varchar("sender_email", { length: 255 }).notNull(),
     subject: varchar("subject", { length: 255 }).notNull(),
     message: text("message").notNull(),
+    status: varchar("status", { length: 50 }).default("PENDING").notNull(), // 'PENDING' | 'ACCEPTED' | 'DECLINED'
     isRead: boolean("is_read").default(false).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
   },
   (table) => ({
     receiverIdx: index("reachout_receiver_idx").on(table.receiverId),
     senderIdx: index("reachout_sender_idx").on(table.senderId),
     readIdx: index("reachout_read_idx").on(table.isRead),
+    statusIdx: index("reachout_status_idx").on(table.status),
+    senderStartupIdx: index("reachout_sender_startup_idx").on(table.senderId, table.startupId),
   })
 );
 
-// 5. Votes Table
+// 5. Reachout Replies Table (Two-Way Threaded In-App Conversations / Revert)
+export const reachoutReplies = pgTable(
+  "reachout_replies",
+  {
+    id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+    reachoutId: text("reachout_id")
+      .notNull()
+      .references(() => reachouts.id, { onDelete: "cascade" }),
+    senderId: text("sender_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    message: text("message").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    reachoutIdx: index("reachout_reply_reachout_idx").on(table.reachoutId),
+    senderIdx: index("reachout_reply_sender_idx").on(table.senderId),
+  })
+);
+
+// 6. Votes Table
 export const votes = pgTable(
   "votes",
   {
