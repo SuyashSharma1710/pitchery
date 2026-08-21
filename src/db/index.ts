@@ -7,16 +7,23 @@ const hasDbUrl = Boolean(
   rawDbUrl && (rawDbUrl.startsWith("postgres://") || rawDbUrl.startsWith("postgresql://"))
 );
 
-// Export Drizzle client singleton if valid database URL is configured
-export const db = hasDbUrl ? drizzle(neon(rawDbUrl!), { schema }) : null;
-export type DatabaseClient = typeof db;
-
 export function getDatabase() {
-  if (!db) {
+  const rawDbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  if (!rawDbUrl || (!rawDbUrl.startsWith("postgres://") && !rawDbUrl.startsWith("postgresql://"))) {
     throw new Error(
       "Database connection failed: DATABASE_URL (or POSTGRES_URL) is not set or invalid. Please configure your DATABASE_URL in Vercel Project Settings > Environment Variables."
     );
   }
-  return db;
+  return drizzle(neon(rawDbUrl), { schema });
 }
+
+export const db = (function () {
+  const rawDbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+  if (!rawDbUrl || (!rawDbUrl.startsWith("postgres://") && !rawDbUrl.startsWith("postgresql://"))) {
+    return null;
+  }
+  return drizzle(neon(rawDbUrl), { schema });
+})();
+
+export type DatabaseClient = ReturnType<typeof getDatabase>;
 

@@ -4,6 +4,8 @@ import HeroBanner from "@/components/hero-banner";
 import StartupForm from "@/components/startup-form";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Submit Your Startup Pitch | Pitchery",
   description: "Pitch your startup idea to the Pitchery community of founders and investors.",

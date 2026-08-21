@@ -3,6 +3,8 @@ import { startupService } from "@/core/container";
 import { getCurrentUser } from "@/lib/auth";
 import EditStartupForm from "./edit-startup-form";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Edit Startup Pitch | Pitchery",
   description: "Update and refine your startup pitch on Pitchery",
