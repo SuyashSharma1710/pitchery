@@ -1,4 +1,3 @@
-import { db } from "@/db";
 import { IUserRepository, IAuthService } from "@/core/interfaces/auth.interface";
 import { IStartupRepository, IStartupService } from "@/core/interfaces/startup.interface";
 import { ICommentRepository, ICommentService } from "@/core/interfaces/comment.interface";
@@ -6,13 +5,9 @@ import { IMessageRepository, IMessageService } from "@/core/interfaces/message.i
 
 // Repositories
 import { DrizzleUserRepository } from "@/repositories/drizzle/user.repository";
-import { InMemoryUserRepository } from "@/repositories/in-memory/user.in-memory.repository";
 import { DrizzleStartupRepository } from "@/repositories/drizzle/startup.repository";
-import { InMemoryStartupRepository } from "@/repositories/in-memory/startup.in-memory.repository";
 import { DrizzleCommentRepository } from "@/repositories/drizzle/comment.repository";
-import { InMemoryCommentRepository } from "@/repositories/in-memory/comment.in-memory.repository";
 import { DrizzleMessageRepository } from "@/repositories/drizzle/message.repository";
-import { InMemoryMessageRepository } from "@/repositories/in-memory/message.in-memory.repository";
 
 // Security & Infrastructure
 import { defaultPasswordHasher } from "@/core/security/password-hasher";
@@ -39,31 +34,13 @@ class ServiceContainer {
   public readonly messageService: IMessageService;
 
   constructor() {
-    const isDbConnected = Boolean(db);
+    // Concrete Drizzle Repositories connected directly to PostgreSQL database
+    this.userRepository = new DrizzleUserRepository();
+    this.startupRepository = new DrizzleStartupRepository();
+    this.commentRepository = new DrizzleCommentRepository();
+    this.messageRepository = new DrizzleMessageRepository();
 
-    const inMemoryUserRepo = new InMemoryUserRepository();
-    const inMemoryStartupRepo = new InMemoryStartupRepository();
-    const inMemoryCommentRepo = new InMemoryCommentRepository();
-    const inMemoryMessageRepo = new InMemoryMessageRepository();
-
-    // 1. Instantiate concrete repositories based on database connectivity (LSP)
-    this.userRepository = isDbConnected
-      ? new DrizzleUserRepository(inMemoryUserRepo)
-      : inMemoryUserRepo;
-
-    this.startupRepository = isDbConnected
-      ? new DrizzleStartupRepository(inMemoryStartupRepo)
-      : inMemoryStartupRepo;
-
-    this.commentRepository = isDbConnected
-      ? new DrizzleCommentRepository(inMemoryCommentRepo)
-      : inMemoryCommentRepo;
-
-    this.messageRepository = isDbConnected
-      ? new DrizzleMessageRepository(inMemoryMessageRepo)
-      : inMemoryMessageRepo;
-
-    // 2. Inject repositories into pure business domain services (DIP)
+    // Inject repositories into pure business domain services (DIP)
     this.authService = new AuthService(
       this.userRepository,
       defaultPasswordHasher,

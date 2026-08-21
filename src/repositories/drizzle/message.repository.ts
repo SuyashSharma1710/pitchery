@@ -1,19 +1,15 @@
-import { db } from "@/db";
+import { getDatabase } from "@/db";
 import * as schema from "@/db/schema";
 import { Reachout, ReachoutReply, ReachoutStatus } from "@/types";
 import {
   IMessageRepository,
   ReachoutCreateEntity,
 } from "@/core/interfaces/message.interface";
-import { InMemoryMessageRepository } from "@/repositories/in-memory/message.in-memory.repository";
 import { desc, asc, eq, and, or } from "drizzle-orm";
 
 export class DrizzleMessageRepository implements IMessageRepository {
-  constructor(private readonly inMemory: IMessageRepository = new InMemoryMessageRepository()) {}
-
   private get database() {
-    if (!db) throw new Error("Database client is not initialized.");
-    return db;
+    return getDatabase();
   }
 
   private async populateRelations(rows: (typeof schema.reachouts.$inferSelect)[]): Promise<Reachout[]> {
@@ -78,7 +74,7 @@ export class DrizzleMessageRepository implements IMessageRepository {
             })
           );
         } catch {
-          // Ignore subquery failures
+          // Ignore relation population error
         }
 
         return {
@@ -94,230 +90,180 @@ export class DrizzleMessageRepository implements IMessageRepository {
   }
 
   async findByReceiverId(receiverId: string): Promise<Reachout[]> {
-    try {
-      const rows = await this.database
-        .select()
-        .from(schema.reachouts)
-        .where(eq(schema.reachouts.receiverId, receiverId))
-        .orderBy(desc(schema.reachouts.createdAt));
+    const rows = await this.database
+      .select()
+      .from(schema.reachouts)
+      .where(eq(schema.reachouts.receiverId, receiverId))
+      .orderBy(desc(schema.reachouts.createdAt));
 
-      return await this.populateRelations(rows);
-    } catch (err) {
-      console.warn("⚠️ Neon DB findByReceiverId error (falling back to in-memory):", err);
-      return this.inMemory.findByReceiverId(receiverId);
-    }
+    return await this.populateRelations(rows);
   }
 
   async findBySenderId(senderId: string): Promise<Reachout[]> {
-    try {
-      const rows = await this.database
-        .select()
-        .from(schema.reachouts)
-        .where(eq(schema.reachouts.senderId, senderId))
-        .orderBy(desc(schema.reachouts.createdAt));
+    const rows = await this.database
+      .select()
+      .from(schema.reachouts)
+      .where(eq(schema.reachouts.senderId, senderId))
+      .orderBy(desc(schema.reachouts.createdAt));
 
-      return await this.populateRelations(rows);
-    } catch (err) {
-      console.warn("⚠️ Neon DB findBySenderId error (falling back to in-memory):", err);
-      return this.inMemory.findBySenderId(senderId);
-    }
+    return await this.populateRelations(rows);
   }
 
   async findById(id: string): Promise<Reachout | null> {
-    try {
-      const rows = await this.database
-        .select()
-        .from(schema.reachouts)
-        .where(eq(schema.reachouts.id, id))
-        .limit(1);
+    const rows = await this.database
+      .select()
+      .from(schema.reachouts)
+      .where(eq(schema.reachouts.id, id))
+      .limit(1);
 
-      if (rows.length === 0) return null;
-      const results = await this.populateRelations(rows);
-      return results[0] || null;
-    } catch (err) {
-      console.warn("⚠️ Neon DB findById error (falling back to in-memory):", err);
-      return this.inMemory.findById(id);
-    }
+    if (rows.length === 0) return null;
+    const results = await this.populateRelations(rows);
+    return results[0] || null;
   }
 
   async findExistingReachout(senderId: string, startupId: string): Promise<Reachout | null> {
-    try {
-      const rows = await this.database
-        .select()
-        .from(schema.reachouts)
-        .where(
-          and(
-            eq(schema.reachouts.senderId, senderId),
-            eq(schema.reachouts.startupId, startupId)
-          )
+    const rows = await this.database
+      .select()
+      .from(schema.reachouts)
+      .where(
+        and(
+          eq(schema.reachouts.senderId, senderId),
+          eq(schema.reachouts.startupId, startupId)
         )
-        .limit(1);
+      )
+      .limit(1);
 
-      if (rows.length === 0) return null;
-      const results = await this.populateRelations(rows);
-      return results[0] || null;
-    } catch (err) {
-      console.warn("⚠️ Neon DB findExistingReachout error (falling back to in-memory):", err);
-      return this.inMemory.findExistingReachout(senderId, startupId);
-    }
+    if (rows.length === 0) return null;
+    const results = await this.populateRelations(rows);
+    return results[0] || null;
   }
 
   async countUnread(receiverId: string): Promise<number> {
-    try {
-      const rows = await this.database
-        .select({ id: schema.reachouts.id })
-        .from(schema.reachouts)
-        .where(
-          and(
-            eq(schema.reachouts.receiverId, receiverId),
-            eq(schema.reachouts.isRead, false)
-          )
-        );
+    const rows = await this.database
+      .select({ id: schema.reachouts.id })
+      .from(schema.reachouts)
+      .where(
+        and(
+          eq(schema.reachouts.receiverId, receiverId),
+          eq(schema.reachouts.isRead, false)
+        )
+      );
 
-      return rows.length;
-    } catch (err) {
-      console.warn("⚠️ Neon DB countUnread error (falling back to in-memory):", err);
-      return this.inMemory.countUnread(receiverId);
-    }
+    return rows.length;
   }
 
   async isSenderBlocked(senderId: string, receiverId: string): Promise<boolean> {
-    try {
-      const rows = await this.database
-        .select({ id: schema.reachouts.id })
-        .from(schema.reachouts)
-        .where(
-          and(
-            eq(schema.reachouts.senderId, senderId),
-            eq(schema.reachouts.receiverId, receiverId),
-            eq(schema.reachouts.status, "BLOCKED")
-          )
+    const rows = await this.database
+      .select({ id: schema.reachouts.id })
+      .from(schema.reachouts)
+      .where(
+        and(
+          eq(schema.reachouts.senderId, senderId),
+          eq(schema.reachouts.receiverId, receiverId),
+          eq(schema.reachouts.status, "BLOCKED")
         )
-        .limit(1);
+      )
+      .limit(1);
 
-      return rows.length > 0;
-    } catch (err) {
-      console.warn("⚠️ Neon DB isSenderBlocked error (falling back to in-memory):", err);
-      return this.inMemory.isSenderBlocked(senderId, receiverId);
-    }
+    return rows.length > 0;
   }
 
   async create(entity: ReachoutCreateEntity): Promise<Reachout> {
-    try {
-      const [inserted] = await this.database
-        .insert(schema.reachouts)
-        .values({
-          id: entity.id,
-          senderId: entity.senderId,
-          receiverId: entity.receiverId,
-          startupId: entity.startupId,
-          senderName: entity.senderName.trim(),
-          senderEmail: entity.senderEmail.trim(),
-          subject: entity.subject.trim(),
-          message: entity.message.trim(),
-          status: entity.status || "PENDING",
-          isRead: entity.isRead,
-        })
-        .returning();
+    const [inserted] = await this.database
+      .insert(schema.reachouts)
+      .values({
+        id: entity.id,
+        senderId: entity.senderId,
+        receiverId: entity.receiverId,
+        startupId: entity.startupId,
+        senderName: entity.senderName.trim(),
+        senderEmail: entity.senderEmail.trim(),
+        subject: entity.subject.trim(),
+        message: entity.message.trim(),
+        status: entity.status || "PENDING",
+        isRead: entity.isRead,
+      })
+      .returning();
 
-      return {
-        ...inserted,
-        status: (inserted.status as ReachoutStatus) || "PENDING",
-        replies: [],
-      };
-    } catch (err) {
-      console.warn("⚠️ Neon DB create reachout error (falling back to in-memory):", err);
-      return this.inMemory.create(entity);
-    }
+    return {
+      ...inserted,
+      status: (inserted.status as ReachoutStatus) || "PENDING",
+      replies: [],
+    };
   }
 
   async updateStatus(id: string, status: ReachoutStatus, receiverId: string): Promise<Reachout | null> {
-    try {
-      const [updated] = await this.database
-        .update(schema.reachouts)
-        .set({
-          status,
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(schema.reachouts.id, id),
-            eq(schema.reachouts.receiverId, receiverId)
-          )
+    const [updated] = await this.database
+      .update(schema.reachouts)
+      .set({
+        status,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(schema.reachouts.id, id),
+          eq(schema.reachouts.receiverId, receiverId)
         )
-        .returning();
+      )
+      .returning();
 
-      if (!updated) return null;
-      const results = await this.populateRelations([updated]);
-      return results[0] || null;
-    } catch (err) {
-      console.warn("⚠️ Neon DB updateStatus error (falling back to in-memory):", err);
-      return this.inMemory.updateStatus(id, status, receiverId);
-    }
+    if (!updated) return null;
+    const results = await this.populateRelations([updated]);
+    return results[0] || null;
   }
 
   async addReply(reply: { id: string; reachoutId: string; senderId: string; message: string }): Promise<ReachoutReply> {
+    const [inserted] = await this.database
+      .insert(schema.reachoutReplies)
+      .values({
+        id: reply.id,
+        reachoutId: reply.reachoutId,
+        senderId: reply.senderId,
+        message: reply.message.trim(),
+      })
+      .returning();
+
+    // Update reachout timestamp & toggle isRead
+    await this.database
+      .update(schema.reachouts)
+      .set({
+        updatedAt: new Date(),
+        isRead: false,
+      })
+      .where(eq(schema.reachouts.id, reply.reachoutId));
+
+    let senderUser = undefined;
     try {
-      const [inserted] = await this.database
-        .insert(schema.reachoutReplies)
-        .values({
-          id: reply.id,
-          reachoutId: reply.reachoutId,
-          senderId: reply.senderId,
-          message: reply.message.trim(),
-        })
-        .returning();
-
-      // Update reachout timestamp & toggle isRead
-      await this.database
-        .update(schema.reachouts)
-        .set({
-          updatedAt: new Date(),
-          isRead: false,
-        })
-        .where(eq(schema.reachouts.id, reply.reachoutId));
-
-      let senderUser = undefined;
-      try {
-        const userRows = await this.database
-          .select()
-          .from(schema.users)
-          .where(eq(schema.users.id, reply.senderId))
-          .limit(1);
-        senderUser = userRows[0] || undefined;
-      } catch {
-        // ignore
-      }
-
-      return {
-        ...inserted,
-        sender: senderUser,
-      };
-    } catch (err) {
-      console.warn("⚠️ Neon DB addReply error (falling back to in-memory):", err);
-      return this.inMemory.addReply(reply);
+      const userRows = await this.database
+        .select()
+        .from(schema.users)
+        .where(eq(schema.users.id, reply.senderId))
+        .limit(1);
+      senderUser = userRows[0] || undefined;
+    } catch {
+      // ignore
     }
+
+    return {
+      ...inserted,
+      sender: senderUser,
+    };
   }
 
   async markAsRead(messageId: string, userId: string): Promise<boolean> {
-    try {
-      await this.database
-        .update(schema.reachouts)
-        .set({ isRead: true })
-        .where(
-          and(
-            eq(schema.reachouts.id, messageId),
-            or(
-              eq(schema.reachouts.receiverId, userId),
-              eq(schema.reachouts.senderId, userId)
-            )
+    await this.database
+      .update(schema.reachouts)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(schema.reachouts.id, messageId),
+          or(
+            eq(schema.reachouts.receiverId, userId),
+            eq(schema.reachouts.senderId, userId)
           )
-        );
+        )
+      );
 
-      return true;
-    } catch (err) {
-      console.warn("⚠️ Neon DB markAsRead error (falling back to in-memory):", err);
-      return this.inMemory.markAsRead(messageId, userId);
-    }
+    return true;
   }
 }
