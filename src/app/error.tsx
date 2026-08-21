@@ -62,7 +62,7 @@ export default function GlobalError({
             <p className="text-[11px] font-black uppercase tracking-wider text-[#EE2B69] mb-1">
               Error Message:
             </p>
-            <p className="font-mono text-xs text-[#991B1B] break-words whitespace-pre-wrap leading-relaxed">
+            <p className="font-mono text-xs text-[#991B1B] wrap-break-word whitespace-pre-wrap leading-relaxed">
               {rawMessage}
             </p>
             {error.digest && (
@@ -99,14 +99,14 @@ export default function GlobalError({
           <div className="flex items-center justify-center sm:justify-start gap-4 flex-wrap pt-2">
             <button
               onClick={() => reset()}
-              className="bg-[#EE2B69] hover:bg-[#d9225c] text-white border-[3px] border-black rounded-full px-6 py-3 font-black uppercase text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-[0px] active:translate-y-[0px] transition-all flex items-center gap-2 cursor-pointer"
+              className="bg-[#EE2B69] hover:bg-[#d9225c] text-white border-[3px] border-black rounded-full px-6 py-3 font-black uppercase text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-0 active:translate-y-0 transition-all flex items-center gap-2 cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
               Retry Connection
             </button>
             <Link
               href="/"
-              className="bg-white hover:bg-gray-50 text-black border-[3px] border-black rounded-full px-6 py-3 font-black uppercase text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000000] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-[0px] active:translate-y-[0px] transition-all flex items-center gap-2"
+              className="bg-white hover:bg-gray-50 text-black border-[3px] border-black rounded-full px-6 py-3 font-black uppercase text-xs sm:text-sm shadow-[4px_4px_0px_0px_#000000] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_0px_#000000] active:translate-x-0 active:translate-y-0 transition-all flex items-center gap-2"
             >
               <Home className="w-4 h-4" />
               Back to Home
