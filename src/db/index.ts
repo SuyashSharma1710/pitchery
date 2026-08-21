@@ -2,10 +2,6 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 
-const rawDbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
-const hasDbUrl = Boolean(
-  rawDbUrl && (rawDbUrl.startsWith("postgres://") || rawDbUrl.startsWith("postgresql://"))
-);
 
 export function getDatabase() {
   const rawDbUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
