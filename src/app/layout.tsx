@@ -10,6 +10,9 @@ const jakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "https://pitchery.vercel.app"
+  ),
   title: "Pitchery | Pitch Your Startup, Connect with Entrepreneurs",
   description:
     "Submit startup ideas, vote on pitches, and get noticed in virtual competitions with the Pitchery community.",
