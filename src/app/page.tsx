@@ -3,6 +3,8 @@ import SearchBar from "@/components/search-bar";
 import StartupCard from "@/components/startup-card";
 import { startupService } from "@/core/container";
 
+export const dynamic = "force-dynamic";
+
 interface HomePageProps {
   searchParams: Promise<{ query?: string; category?: string }>;
 }

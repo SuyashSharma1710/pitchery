@@ -13,6 +13,8 @@ import { getCurrentUser } from "@/lib/auth";
 import { formatDateUppercase } from "@/lib/utils";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 interface StartupPageProps {
   params: Promise<{ id: string }>;
 }

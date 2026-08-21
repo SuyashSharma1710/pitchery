@@ -5,6 +5,8 @@ import { authService, startupService, messageService } from "@/core/container";
 import { getCurrentUser } from "@/lib/auth";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 interface UserPageProps {
   params: Promise<{ id: string }>;
   searchParams?: Promise<{ tab?: string }>;

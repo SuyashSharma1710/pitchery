@@ -3,6 +3,8 @@ import ExploreView from "@/components/explore/explore-view";
 import { startupService } from "@/core/container";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Explore Startup Pitches | Pitchery",
   description:
